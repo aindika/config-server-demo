@@ -1,0 +1,44 @@
+spring:
+  sql:
+    init:
+      # Set the properties mentioned below for the purpose of any script-based initialization, i.e., inserting data using data.sql and also creating tables using schema.sql.
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
+  jpa:
+    # Setting the following property to true allows schema.sql to be executed before data.sql
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    url: # database url ex: jdbc:postgresql://localhost:5432/postgres
+    username: # username
+    password: # password
+    driver-class-name: org.postgresql.Driver
+  application:
+    name: config-server
+  profiles:
+    active: jdbc,git,native
+  cloud:
+    config:
+      server:
+        jdbc:
+          # The query to be executed in the database to collect client service configurations
+          sql: SELECT PROP_KEY,VALUE FROM MS_CONFIG WHERE APPLICATION=? AND PROFILE=? AND CONFIG_LABEL=?
+        git:
+          default-label: main
+          uri: # url of the git repo
+          username: # username
+          password: # password or token
+          # This property ensures that the config server always loads the latest configurations during startup from the git repository supplied in the url.
+          clone-on-start: true
+        native:
+          add-label-locations: true
+          search-locations: ./config-server-repository
+#        awss3:
+#          bucket: bucket-name
+#          region: region-name
+    # Setting fail-fast to true allows for a more proactive approach to handling startup failures
+    fail-fast: true

@@ -1,0 +1,64 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+import org.gradle.api.initialization.resolve.RulesMode
+
+rootProject.name = 'config-server-demo'
+
+dependencyResolutionManagement {
+    repositories{
+        mavenCentral()
+    }
+
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // Repositories mentioned in this file are final (i.e. you can not override in sub modules )
+    rulesMode.set(RulesMode.FAIL_ON_PROJECT_RULES)
+    // Versions declared in this file are final. (i.e. you can not override in sub modules )
+
+    versionCatalogs {
+        tools{
+            // Plugin Versions
+            version('spring-boot-plugin', '2.7.13')
+            version('spring-dependency-management-plugin','1.0.15.RELEASE')
+
+            // Plugin Dependency
+            plugin('spring.boot.plugin','org.springframework.boot').versionRef('spring-boot-plugin')
+            plugin('spring.dependency.management.plugin','io.spring.dependency-management').versionRef('spring-dependency-management-plugin')
+        }
+
+        libs{
+            //Library Versions
+            version('spring-boot','2.7.13')
+            version('spring-cloud','3.1.2')
+            version('postgresql','42.3.8')
+            version('awss3','1.12.472')
+            version('snakeyaml','2.0')
+            version('bouncycastle','1.69')
+
+
+            // This is use to support config server with jdbc profile
+            library('spring.boot.data.jdbc','org.springframework.boot','spring-boot-starter-data-jdbc').versionRef('spring-boot')
+            // Dependencies
+            library('spring.cloud.config.server', 'org.springframework.cloud', 'spring-cloud-config-server').versionRef('spring-cloud')
+            // dependency for config client
+            library('spring.cloud.config.client', 'org.springframework.cloud', 'spring-cloud-starter-config').versionRef('spring-cloud')
+            // Dependency for process bootstrap.yml
+            library('spring.cloud.bootstrap', 'org.springframework.cloud', 'spring-cloud-starter-bootstrap').versionRef('spring-cloud')
+            // Dependency for communicate with postgres database
+            library('postgresql','org.postgresql','postgresql').versionRef('postgresql')
+            // Dependency for communicate with AWS S3
+            library('awss3','com.amazonaws','aws-java-sdk-s3').versionRef('awss3')
+            // Vulnerability fixed versions
+            library('snakeyaml', 'org.yaml','snakeyaml').versionRef('snakeyaml')
+            library('bouncycastle', 'org.bouncycastle','bcprov-jdk15on').versionRef('bouncycastle')
+
+            bundle('config.server.essentials',['spring.cloud.config.server','spring.cloud.bootstrap','spring.boot.data.jdbc','postgresql','awss3'])
+            bundle('config.client.essentials',['spring.cloud.config.client','spring.cloud.bootstrap'])
+            bundle('vulnerability.fixed.libs.essentials',['snakeyaml','bouncycastle'])
+
+        }
+    }
+}
+include 'config-server'
+include 'client-native-profile'
+include 'client-git-profile'
+include 'client-jdbc-profile'
+

@@ -1,0 +1,1 @@
+INSERT INTO MS_CONFIG(APPLICATION, PROFILE, CONFIG_LABEL, PROP_KEY, VALUE ) SELECT 'client-jdbc-profile', 'dev', 'main', 'api.message', 'Hello world from client-jdbc-profile application' WHERE NOT EXISTS (SELECT APPLICATION, PROFILE, CONFIG_LABEL FROM MS_CONFIG WHERE APPLICATION = 'client-jdbc-profile' AND PROFILE = 'dev' AND CONFIG_LABEL = 'main' AND PROP_KEY = 'api.message');

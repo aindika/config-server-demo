@@ -1,0 +1,23 @@
+plugins{
+    id 'java'
+    alias(tools.plugins.spring.boot.plugin)
+    alias(tools.plugins.spring.dependency.management.plugin)
+}
+
+sourceCompatibility = '11'
+
+dependencies {
+    implementation ( libs.bundles.config.server.essentials ) {
+        exclude group: 'org.yaml' , module: 'snakeyaml'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+    }
+
+    implementation libs.bundles.vulnerability.fixed.libs.essentials
+}
+
+
+
+// Provide build information to "META-INF/build-info.properties"
+springBoot{
+    buildInfo()
+}
